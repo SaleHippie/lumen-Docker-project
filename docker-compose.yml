@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+    nginx:
+        image: nginx:latest
+        container_name: nginx
+        volumes:
+            - ./nginx:/usr/share/nginx/html
+            - ./default.conf:/etc/nginx/conf.d/default.conf
+        ports:
+            - 8089:80
+        links:
+            - php_server
+    php_server:
+        container_name: php_server
+        build: .
+        volumes:
+            - ./nginx:/usr/share/nginx/html
+            - project:/var/www/html/src
+        ports: 
+        - '8001:8001'
+    maria_db:
+        container_name: mariadb
+        image: mariadb:latest
+        volumes:
+            - ./:/usr/share/nginx/html
+        environment:
+            MARIADB_ROOT_PASSWORD: root
+volumes:
+    project:
+        driver: local
+        driver_opts:
+            type: 'none'
+            o: 'bind'
+            device: './src'
