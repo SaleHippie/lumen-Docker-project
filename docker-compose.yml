@@ -19,13 +19,28 @@ services:
             - project:/var/www/html/src
         ports: 
         - '8001:8001'
-    maria_db:
-        container_name: mariadb
-        image: mariadb:latest
+    mysql:
+        container_name: mysqldb
+        image: mysql:latest
+        ports:
+           - 3306:3306
         volumes:
             - ./:/usr/share/nginx/html
+            - ./database/mysql-data:/var/lib/mysql:rw
         environment:
-            MARIADB_ROOT_PASSWORD: root
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_USER=lumen
+            - MYSQL_PASSWORD=lumenpwd
+            - MYSQL_DATABASE=mydb
+    mailhog_server:
+        image: mailhog/mailhog
+        container_name: mailhog_server
+        #this is optional
+        tty: true
+        ports:
+            - '1025:1025'
+            - '8025:8025'
+
 volumes:
     project:
         driver: local
